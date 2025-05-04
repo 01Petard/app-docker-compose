@@ -25,6 +25,7 @@
    ├── nginx/
    │   └── conf.d/
    │       └── default.conf   # Nginx 配置（静态 + /api 代理）
+   ├── .env                   # 存储数据库和缓存的密码
    ├── app.jar                # 后端打包好的 Java 应用
    └── docker-compose.yml     # Docker Compose 编排配置
    ```
