@@ -1,0 +1,72 @@
+services:
+  mysql:
+    image: mysql:8.0.32
+    container_name: mysql
+    restart: on-failure
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --init-file=/docker-entrypoint-initdb.d/create_user.sql
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init_scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7.2.0
+    container_name: redis
+    restart: on-failure
+    command: redis-server --requirepass "${REDIS_PASSWORD}"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  java-app:
+    image: openjdk:8-jdk
+    container_name: java-app
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./app.jar:/app.jar
+      - ./logs:/logs
+    command: java -Xmx3g -Xms3g -XX:+UseG1GC -jar app.jar
+
+  nginx:
+    image: nginx:1.25.3
+    container_name: nginx
+    restart: on-failure
+    ports:
+      - "9000:80"
+    volumes:
+      - ./dist:/usr/share/nginx/html
+      - ./nginx/conf.d:/etc/nginx/conf.d
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    name: my_mysql_data
+  redis_data:
+    name: my_redis_data

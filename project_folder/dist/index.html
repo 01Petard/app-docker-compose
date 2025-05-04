@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Controller API Testing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="container mx-auto bg-white p-6 rounded shadow-md">
+        <h1 class="text-2xl font-bold mb-4">Controller API Testing</h1>
+        <!-- 接口说明 -->
+        <div class="mb-6">
+            <h2 class="text-xl font-bold mb-2">接口说明</h2>
+            <ul class="list-disc pl-6">
+                <li>
+                    <strong>/test/arthas</strong>: 此接口用于测试Arthas的接口响应时间，会依次调用三个方法并休眠一定时间。
+                </li>
+                <li>
+                    <strong>/test/mysql/query</strong>: 该接口用于测试MySQL，返回所有用户信息。
+                </li>
+                <li>
+                    <strong>/test/redis/add</strong>: 该接口会对Redis进行多种操作测试，包括字符串、哈希、列表、集合和有序集合操作，并设置过期时间。
+                </li>
+                <li>
+                    <strong>/test/redis/delete</strong>: 此接口会删除所有以 "test_" 开头的Redis键，用于清理测试数据。
+                </li>
+            </ul>
+        </div>
+        <!-- 测试按钮 -->
+        <div class="mb-6">
+            <button id="arthasButton"
+                class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded mr-2">GET /test/arthas</button>
+            <button id="mysqlButton"
+                class="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded mr-2">GET /test/mysql/query</button>
+            <button id="addButton"
+                class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2">POST /test/redis/add</button>
+            <button id="deleteButton"
+                class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mr-2">DELETE /test/redis/delete</button>
+        </div>
+        <!-- 结果框 -->
+        <div class="border p-4 rounded">
+            <h2 class="text-xl font-bold mb-2">测试结果</h2>
+            <pre id="resultBox" class="bg-gray-200 p-2 rounded"></pre>
+        </div>
+    </div>
+    <script>
+        const baseUrl = 'http://localhost:8080'; // 根据实际情况修改
+
+        const deleteButton = document.getElementById('deleteButton');
+        const addButton = document.getElementById('addButton');
+        const arthasButton = document.getElementById('arthasButton');
+        const mysqlButton = document.getElementById('mysqlButton');
+        const resultBox = document.getElementById('resultBox');
+
+        deleteButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${baseUrl}/test/redis/delete`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                resultBox.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultBox.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        addButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${baseUrl}/test/redis/add`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                resultBox.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultBox.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        arthasButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${baseUrl}/test/arthas`, {
+                    method: 'GET'
+                });
+                const data = await response.json();
+                resultBox.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultBox.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        mysqlButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${baseUrl}/test/mysql/query`, {
+                    method: 'GET'
+                });
+                const data = await response.json();
+                resultBox.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultBox.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
