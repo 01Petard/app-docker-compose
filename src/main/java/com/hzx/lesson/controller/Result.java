@@ -1,4 +1,4 @@
-package com.hzx.lesson;
+package com.hzx.lesson.controller;
 
 import lombok.Data;
 

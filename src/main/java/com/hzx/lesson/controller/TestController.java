@@ -1,11 +1,10 @@
-package com.hzx.lesson;
+package com.hzx.lesson.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,22 +22,56 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TestController {
 
+
+    /**
+     * 测试接口响应时间
+     */
+    @GetMapping("/arthas")
+    public Result<String> test() {
+        this.m1();
+        this.m2();
+        this.m3();
+        return Result.success("hello, arthas!");
+    }
+    private void m1() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void m2() {
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void m3() {
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 测试mysql
+     */
+    @Autowired
+    private UserMapper userMapper;
+
+    @GetMapping("/mysql/query")
+    public Result<List<User>> getAllUsers() {
+        return Result.success(userMapper.selectList(null));
+    }
+
+
+    /**
+     * 测试redis
+     */
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
-
-    // 统一测试键的前缀，便于后续清理（可选）
-    String testPrefix = "test_";
-
-    @DeleteMapping("/redis/delete")
-    public Result<String> redisDelete() {
-        // 获取所有以 prefix 开头的键并删除
-        Set<String> keys = redisTemplate.keys(testPrefix + "*");
-        if (ObjectUtils.isNotEmpty(keys)) {
-            redisTemplate.delete(keys);
-            log.info("Cleaned up {} test keys", keys.size());
-        }
-        return Result.success("清理所有测试键");
-    }
 
     @PostMapping("/redis/add")
     public Result<String> redisAdd() {
@@ -170,40 +203,18 @@ public class TestController {
     }
 
 
-    /**
-     * 测试arthas的接口响应时间
-     * @return
-     */
-    @GetMapping("/arthas")
-    public Result<String> test() {
-        this.m1();
-        this.m2();
-        this.m3();
-        return Result.success("hello, arthas!");
-    }
+    // 统一测试键的前缀，便于后续清理（可选）
+    String testPrefix = "test_";
 
-    private void m1() {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+    @DeleteMapping("/redis/delete")
+    public Result<String> redisDelete() {
+        // 获取所有以 prefix 开头的键并删除
+        Set<String> keys = redisTemplate.keys(testPrefix + "*");
+        if (ObjectUtils.isNotEmpty(keys)) {
+            redisTemplate.delete(keys);
+            log.info("Cleaned up {} test keys", keys.size());
         }
+        return Result.success("清理所有测试键");
     }
 
-    private void m2() {
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    private void m3() {
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

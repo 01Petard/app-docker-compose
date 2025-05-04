@@ -1,4 +1,4 @@
-package com.hzx.lesson;
+package com.hzx.lesson.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
