@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+  session:
+    store-type: redis
+
+logging:
+  level:
+    com.hzx.lesson: info
+  file:
+    name: logs/app.log
