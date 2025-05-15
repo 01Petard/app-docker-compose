@@ -1,0 +1,36 @@
+services:
+  mysql:
+    image: mysql:8.0.32
+    container_name: mysql_lesson
+    restart: on-failure
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --init-file=/docker-entrypoint-initdb.d/create_user.sql
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init_scripts:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:7.2.0
+    container_name: redis_lesson
+    restart: on-failure
+    command: redis-server --requirepass "${REDIS_PASSWORD}"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    name: my_mysql_data_lesson
+  redis_data:
+    name: my_redis_data_lesson
