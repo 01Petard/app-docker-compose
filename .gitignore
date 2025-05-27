@@ -1,11 +1,38 @@
-HELP.md
+# =============================
+# 项目构建与编译产物
+# =============================
 target/
-logs/
-log/
+build/
+out/
+*.class
+*.jar
+*.war
+*.zip
+*.rar
+*.tar.gz
+
+# 保留 Maven Wrapper 文件
 !.mvn/wrapper/maven-wrapper.jar
+
+# 排除源码目录中的构建产物（保留 src 内的 target/build）
 !**/src/main/**/target/
 !**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
+
+# =============================
+# 日志文件
+# =============================
+*.log
+*.log.gz
+logs/
+log/
+
+
+# =============================
+# IDE 配置文件
+# =============================
 ### STS ###
 .apt_generated
 .classpath
@@ -26,9 +53,31 @@ log/
 /nbbuild/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
+
+
+# =============================
+# 系统与依赖文件
+# =============================
+.DS_Store
+node_modules
+/dist/
+
+# 本地环境配置
+.env.local
+.env.*.local
+
+# 包管理器日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 其他编辑器文件（通用）
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
