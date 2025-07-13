@@ -19,11 +19,31 @@ services:
     image: redis:7.2.0
     container_name: redis_lesson
     restart: on-failure
-    command: redis-server --requirepass "${REDIS_PASSWORD}"
+    command: redis-server --requirepass "${REDIS_PASSWORD}" --appendonly yes
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+
+  adminer:
+    image: adminer
+    container_name: adminer_lesson
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      - TZ=Asia/Shanghai
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight_lesson
+    restart: on-failure
+    ports:
+      - "8001:8001"
+    volumes:
+      - redisinsight_data:/db
+    environment:
+      - TZ=Asia/Shanghai
 
 networks:
   default:
@@ -34,3 +54,5 @@ volumes:
     name: my_mysql_data_lesson
   redis_data:
     name: my_redis_data_lesson
+  redisinsight_data:
+    name: my_redisinsight_data_lesson
